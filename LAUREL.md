@@ -10,12 +10,15 @@
 
 ## Upgrade to a new upstream release
 
+`laurel` is protected (PR review, no force-push), so upgrades merge rather than rebase.
+
 ```bash
 gh repo sync Bloomfield-Homes/claude-code-action   # fast-forward main
 git fetch upstream --tags
-git rebase --onto <new-tag> <old-tag> laurel
+git checkout -b upgrade/<new-tag> origin/laurel
+git merge <new-tag>
 bun run typecheck && bun test
-git push --force-with-lease origin laurel
+git push origin upgrade/<new-tag>   # open a PR into laurel
 ```
 
-Then pin the new `laurel` SHA in `org-dotgithub/.github/workflows/laurel.yml`.
+After it merges, pin the new `laurel` SHA in `org-dotgithub/.github/workflows/laurel.yml`.
