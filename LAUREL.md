@@ -4,8 +4,9 @@
 
 ## Patch
 
-- `src/branding.ts` reads `AGENT_DISPLAY_NAME`, `AGENT_SIGNATURE` and `AGENT_SPINNER_URL` from the environment.
-- `assets/laurel-spinner.gif` is the Laurel spinner, built from the laurel-agent likeness SVG.
+- `src/branding.ts` reads `AGENT_DISPLAY_NAME`, `AGENT_SIGNATURE`, `AGENT_SPINNER_URL` and `AGENT_SPINNER_SIZE` from the environment.
+- `assets/laurel-spinner.png` is the Laurel spinner, an animated PNG built from the laurel-agent
+  likeness SVG by `assets/make-laurel-spinner.py`.
 - Unset, every string matches upstream, so upstream tests pass unchanged.
 - Laurel sets `AGENT_DISPLAY_NAME: Laurel` on the action step.
 
