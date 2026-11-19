@@ -1,8 +1,8 @@
 import { GITHUB_SERVER_URL } from "../../api/config";
-import { SPINNER_URL, WORKING_TEXT } from "../../../branding";
+import { SPINNER_SIZE, SPINNER_URL, WORKING_TEXT } from "../../../branding";
 
 export const SPINNER_HTML =
-  `<img src="${SPINNER_URL}" width="14px" height="14px" style="vertical-align: middle; margin-left: 4px;" />`;
+  `<img src="${SPINNER_URL}" width="${SPINNER_SIZE}" height="${SPINNER_SIZE}" style="vertical-align: middle; margin-left: 4px;" />`;
 
 export function createJobRunLink(
   owner: string,
