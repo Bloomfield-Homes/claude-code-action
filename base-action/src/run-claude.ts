@@ -1,6 +1,7 @@
 import { runClaudeWithSdk } from "./run-claude-sdk";
 import type { ClaudeRunResult } from "./run-claude-sdk";
 import { parseSdkOptions } from "./parse-sdk-options";
+import { moveMcpConfigToFile } from "./mcp-config-file";
 
 export type ClaudeOptions = {
   claudeArgs?: string;
@@ -20,6 +21,6 @@ export async function runClaude(
   promptPath: string,
   options: ClaudeOptions,
 ): Promise<ClaudeRunResult> {
-  const parsedOptions = parseSdkOptions(options);
+  const parsedOptions = moveMcpConfigToFile(parseSdkOptions(options));
   return runClaudeWithSdk(promptPath, parsedOptions);
 }
