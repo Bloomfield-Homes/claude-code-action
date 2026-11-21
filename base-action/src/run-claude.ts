@@ -1,6 +1,7 @@
 import { runClaudeWithSdk } from "./run-claude-sdk";
 import type { ClaudeRunResult } from "./run-claude-sdk";
 import { parseSdkOptions } from "./parse-sdk-options";
+import { moveMcpConfigToFile } from "./mcp-config-file";
 
 import type { PermissionMode } from "@anthropic-ai/claude-agent-sdk";
 
@@ -24,6 +25,10 @@ export async function runClaude(
   promptPath: string,
   options: ClaudeOptions,
 ): Promise<ClaudeRunResult> {
-  const parsedOptions = parseSdkOptions(options);
-  return runClaudeWithSdk(promptPath, parsedOptions);
+  const { parsed, cleanup } = moveMcpConfigToFile(parseSdkOptions(options));
+  try {
+    return await runClaudeWithSdk(promptPath, parsed);
+  } finally {
+    cleanup();
+  }
 }

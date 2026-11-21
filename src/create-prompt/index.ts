@@ -22,6 +22,8 @@ import type { GitHubContext, ParsedGitHubContext } from "../github/context";
 import type { CommonFields, PreparedContext, EventData } from "./types";
 import { GITHUB_SERVER_URL } from "../github/api/config";
 import { extractUserRequest } from "../utils/extract-user-request";
+import { AGENT_NAME, AGENT_SIGNATURE } from "../branding";
+import { SPINNER_HTML } from "../github/operations/comments/common";
 export type { CommonFields, PreparedContext } from "./types";
 
 const GIT_ADD_WRAPPER = `${process.env.GITHUB_ACTION_PATH}/scripts/git-add.sh`;
@@ -797,7 +799,7 @@ ${eventData.eventName === "issue_comment" || eventData.eventName === "pull_reque
         - The body should include:
           - A clear description of the changes
           - Reference to the original ${eventData.isPR ? "PR" : "issue"}
-          - The signature: "Generated with [Claude Code](https://claude.ai/code)"
+          - The signature: "${AGENT_SIGNATURE}"
         - Just include the markdown link with text "Create a PR" - do not add explanatory text before it like "You can create a PR using this link"`
           : ""
       }
@@ -814,7 +816,7 @@ ${eventData.eventName === "issue_comment" || eventData.eventName === "pull_reque
 5. Final Update:
    - Always update the GitHub comment to reflect the current todo state.
    - When all todos are completed, remove the spinner and add a brief summary of what was accomplished, and what was not done.
-   - Note: If you see previous Claude comments with headers like "**Claude finished @user's task**" followed by "---", do not include this in your comment. The system adds this automatically.
+   - Note: If you see previous ${AGENT_NAME} comments with headers like "**${AGENT_NAME} finished @user's task**" followed by "---", do not include this in your comment. The system adds this automatically.
    - If you changed any files locally, you must update them in the remote branch via ${useCommitSigning ? "mcp__github_file_ops__commit_files" : "git commands (add, commit, push)"} before saying that you're done.
    ${eventData.claudeBranch ? `- If you created anything in your branch, your comment must include the PR URL with prefilled title and body mentioned above.` : ""}
 
@@ -823,7 +825,7 @@ Important Notes:
 - Never create new comments. Only update the existing comment using mcp__github_comment__update_claude_comment.
 - This includes ALL responses: code reviews, answers to questions, progress updates, and final results.${eventData.isPR ? `\n- PR CRITICAL: After reading files and forming your response, you MUST post it by calling mcp__github_comment__update_claude_comment. Do NOT just respond with a normal response, the user will not see it.` : ""}
 - You communicate exclusively by editing your single comment - not through any other means.
-- Use this spinner HTML when work is in progress: <img src="https://github.com/user-attachments/assets/5ac382c7-e004-429b-8e35-7feb3e8f9c6f" width="14px" height="14px" style="vertical-align: middle; margin-left: 4px;" />
+- Use this spinner HTML when work is in progress: ${SPINNER_HTML}
 ${eventData.isPR && !eventData.claudeBranch ? `- Always push to the existing branch when triggered on a PR.` : `- IMPORTANT: You are already on the correct branch (${eventData.claudeBranch || "the created branch"}). Never create new branches when triggered on issues or closed/merged PRs.`}
 ${
   useCommitSigning

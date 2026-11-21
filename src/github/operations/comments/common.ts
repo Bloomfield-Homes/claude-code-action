@@ -1,7 +1,8 @@
 import { GITHUB_SERVER_URL } from "../../api/config";
+import { SPINNER_SIZE, SPINNER_URL, WORKING_TEXT } from "../../../branding";
 
 export const SPINNER_HTML =
-  '<img src="https://github.com/user-attachments/assets/5ac382c7-e004-429b-8e35-7feb3e8f9c6f" width="14px" height="14px" style="vertical-align: middle; margin-left: 4px;" />';
+  `<img src="${SPINNER_URL}" width="${SPINNER_SIZE}" height="${SPINNER_SIZE}" style="vertical-align: middle; margin-left: 4px;" />`;
 
 export function createJobRunLink(
   owner: string,
@@ -30,7 +31,7 @@ export function createCommentBody(
   jobRunLink: string,
   branchLink: string = "",
 ): string {
-  return `Claude Code is working… ${SPINNER_HTML}
+  return `${WORKING_TEXT}… ${SPINNER_HTML}
 
 I'll analyze this and get back to you.
 

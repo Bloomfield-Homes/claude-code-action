@@ -1,6 +1,7 @@
 import { GITHUB_SERVER_URL } from "../api/config";
 import { redactSecrets } from "../utils/sanitizer";
 import { encodeBranchNameForUrl } from "./comments/common";
+import { AGENT_NAME, WORKING_TEXT } from "../../branding";
 
 export type ExecutionDetails = {
   total_cost_usd?: number;
@@ -82,8 +83,11 @@ export function updateCommentBody(input: CommentUpdateInput): string {
   } = input;
 
   // Extract content from the original comment body
-  // First, remove the "Claude Code is working…" or "Claude Code is working..." message
-  const workingPattern = /Claude Code is working[…\.]{1,3}(?:\s*<img[^>]*>)?/i;
+  // First, remove the "<name> is working…" or "<name> is working..." message
+  const workingPattern = new RegExp(
+    `${WORKING_TEXT.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}[….]{1,3}(?:\\s*<img[^>]*>)?`,
+    "i",
+  );
   let bodyContent = originalBody.replace(workingPattern, "").trim();
 
   // Check if there's a PR link in the content
@@ -115,7 +119,7 @@ export function updateCommentBody(input: CommentUpdateInput): string {
   let header = "";
 
   if (actionFailed) {
-    header = "**Claude encountered an error";
+    header = `**${AGENT_NAME} encountered an error`;
     if (durationStr) {
       header += ` after ${durationStr}`;
     }
@@ -126,7 +130,7 @@ export function updateCommentBody(input: CommentUpdateInput): string {
     const username =
       triggerUsername || (usernameMatch ? usernameMatch[1] : "user");
 
-    header = `**Claude finished @${username}'s task`;
+    header = `**${AGENT_NAME} finished @${username}'s task`;
     if (durationStr) {
       header += ` in ${durationStr}`;
     }
