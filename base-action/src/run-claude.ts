@@ -21,6 +21,10 @@ export async function runClaude(
   promptPath: string,
   options: ClaudeOptions,
 ): Promise<ClaudeRunResult> {
-  const parsedOptions = moveMcpConfigToFile(parseSdkOptions(options));
-  return runClaudeWithSdk(promptPath, parsedOptions);
+  const { parsed, cleanup } = moveMcpConfigToFile(parseSdkOptions(options));
+  try {
+    return await runClaudeWithSdk(promptPath, parsed);
+  } finally {
+    cleanup();
+  }
 }

@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 
 import { afterEach, describe, expect, test } from "bun:test";
-import { mkdtempSync, readFileSync, rmSync, statSync } from "fs";
+import { existsSync, mkdtempSync, readFileSync, rmSync, statSync } from "fs";
 import { tmpdir } from "os";
 import { dirname, join } from "path";
 import { moveMcpConfigToFile } from "../src/mcp-config-file";
@@ -30,7 +30,7 @@ describe("moveMcpConfigToFile", () => {
     base = mkdtempSync(join(tmpdir(), "mcp-test-"));
     const json =
       '{"mcpServers":{"github_comment":{"env":{"GITHUB_TOKEN":"ghs_example"}}}}';
-    const result = moveMcpConfigToFile(parsed(json), base);
+    const { parsed: result, cleanup } = moveMcpConfigToFile(parsed(json), base);
     const path = result.sdkOptions.extraArgs?.["mcp-config"] as string;
 
     expect(path.startsWith(base)).toBe(true);
@@ -39,12 +39,15 @@ describe("moveMcpConfigToFile", () => {
     expect(statSync(path).mode & 0o777).toBe(0o600);
     expect(statSync(dirname(path)).mode & 0o777).toBe(0o700);
     expect(result.sdkOptions.extraArgs?.model).toBe("claude");
+
+    cleanup();
+    expect(existsSync(dirname(path))).toBe(false);
   });
 
   test("a file path or a missing config is left as it is", () => {
     const withPath = parsed("/tmp/user-mcp.json");
-    expect(moveMcpConfigToFile(withPath, "/nonexistent")).toBe(withPath);
+    expect(moveMcpConfigToFile(withPath, "/nonexistent").parsed).toBe(withPath);
     const without = parsed();
-    expect(moveMcpConfigToFile(without, "/nonexistent")).toBe(without);
+    expect(moveMcpConfigToFile(without, "/nonexistent").parsed).toBe(without);
   });
 });
